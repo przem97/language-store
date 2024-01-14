@@ -13,10 +13,10 @@ public class Word {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column
+    @Column(unique = true, nullable = false, updatable = false)
     private String word;
 
-    @Column
+    @Column(nullable = false, updatable = false)
     private Language language;
 
     public Word(String word) {
