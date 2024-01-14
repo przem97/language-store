@@ -1,4 +1,4 @@
-package com.przem7.englishcourseapp.model;
+package com.przem7.englishcourseapp.model.orm;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -15,6 +15,9 @@ public class Word {
 
     @Column
     private String word;
+
+    @Column
+    private Language language;
 
     public Word(String word) {
         this.word = word;
