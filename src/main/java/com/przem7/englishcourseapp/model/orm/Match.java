@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class Match {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     protected Long id;
     protected Long millisWaited;
     protected LocalDateTime stamp;
