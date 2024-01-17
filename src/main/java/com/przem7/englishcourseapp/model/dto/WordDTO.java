@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class WordDto {
+public class WordDTO {
 
     private Long id;
     private String word;
