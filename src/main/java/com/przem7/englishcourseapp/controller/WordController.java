@@ -2,9 +2,11 @@ package com.przem7.englishcourseapp.controller;
 
 import com.przem7.englishcourseapp.mapper.WordMapper;
 import com.przem7.englishcourseapp.model.dto.WordDto;
+import com.przem7.englishcourseapp.model.dto.WordStatisticsDto;
 import com.przem7.englishcourseapp.model.orm.Word;
 
 import com.przem7.englishcourseapp.service.WordService;
+import com.przem7.englishcourseapp.service.WordStatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,9 @@ public class WordController {
     private WordService wordService;
 
     @Autowired
+    private WordStatisticsService wordStatisticsService;
+
+    @Autowired
     private WordMapper wordMapper;
 
     @GetMapping("/words")
@@ -27,7 +32,7 @@ public class WordController {
     }
 
     @GetMapping("/words/{wordId}")
-    public ResponseEntity<Word> findById(@RequestParam("wordId") Long wordId) {
+    public ResponseEntity<Word> findById(@PathVariable("wordId") Long wordId) {
         Optional<Word> word = wordService.findById(wordId);
         return word.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -38,8 +43,13 @@ public class WordController {
     }
 
     @DeleteMapping("/words/{wordId}")
-    public ResponseEntity<Void> deleteById(@RequestParam("wordId") Long wordId) {
+    public ResponseEntity<Void> deleteById(@PathVariable("wordId") Long wordId) {
         wordService.deleteById(wordId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/words/{wordId}/statistics")
+    public ResponseEntity<WordStatisticsDto> getStatisticsByWordId(@PathVariable("wordId") Long wordId) {
+        return ResponseEntity.ok(wordStatisticsService.getWordStatisticsByWordId(wordId));
     }
 }
