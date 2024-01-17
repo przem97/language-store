@@ -18,9 +18,9 @@ public class WordStatistics {
     @OneToOne
     private Word word;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<FailureMatch> failureMatches;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<SuccessMatch> successMatches;
 }

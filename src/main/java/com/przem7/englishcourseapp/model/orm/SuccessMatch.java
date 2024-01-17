@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SuccessMatch extends Match {
 
-    @OneToOne
-    private Word successMatchWord;
+    @ManyToOne
+    private WordStatistics wordStatistics;
 
 }

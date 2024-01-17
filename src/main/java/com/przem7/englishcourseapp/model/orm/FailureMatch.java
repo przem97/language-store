@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FailureMatch extends Match {
 
+    @ManyToOne
+    private WordStatistics wordStatistics;
+
     private String errorValue;
 
     private Integer levenshteinDistance;
