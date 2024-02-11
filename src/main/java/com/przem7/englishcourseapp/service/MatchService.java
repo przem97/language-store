@@ -43,7 +43,9 @@ public class MatchService {
             wordStatisticsRepository.save(wordStatistics);
         } else {
             log.info("saving failure match");
-            FailureMatch failureMatch = new FailureMatch(wordStatistics, matchDto.getAnswer());
+            FailureMatch failureMatch = new FailureMatch();
+            failureMatch.setErrorValue(matchDto.getAnswer());
+            failureMatch.setWordStatistics(wordStatistics);
 
             wordStatistics.getFailureMatches().add(failureMatch);
             wordStatisticsRepository.save(wordStatistics);
