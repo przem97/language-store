@@ -5,6 +5,5 @@ import lombok.Data;
 @Data
 public class MatchDTO {
 
-    private String baseWord;
     private String answer;
 }
