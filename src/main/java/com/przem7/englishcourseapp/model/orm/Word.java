@@ -14,7 +14,7 @@ public class Word {
     private long id;
 
     @Column(unique = true, nullable = false, updatable = false)
-    private String word;
+    private String value;
 
     @Column(nullable = false, updatable = false)
     private Language language;
