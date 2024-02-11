@@ -1,8 +1,8 @@
 package com.przem7.englishcourseapp.controller;
 
 import com.przem7.englishcourseapp.mapper.WordMapper;
-import com.przem7.englishcourseapp.model.dto.WordDto;
-import com.przem7.englishcourseapp.model.dto.WordStatisticsDto;
+import com.przem7.englishcourseapp.model.dto.WordDTO;
+import com.przem7.englishcourseapp.model.dto.WordStatisticsDTO;
 import com.przem7.englishcourseapp.model.orm.Word;
 
 import com.przem7.englishcourseapp.service.WordService;
@@ -38,7 +38,7 @@ public class WordController {
     }
 
     @PostMapping("/words")
-    public ResponseEntity<Word> save(@RequestBody WordDto wordDto) {
+    public ResponseEntity<Word> save(@RequestBody WordDTO wordDto) {
         return ResponseEntity.ok(wordService.save(wordMapper.convertToEntity(wordDto)));
     }
 
@@ -49,7 +49,7 @@ public class WordController {
     }
 
     @GetMapping("/words/{wordId}/statistics")
-    public ResponseEntity<WordStatisticsDto> getStatisticsByWordId(@PathVariable("wordId") Long wordId) {
+    public ResponseEntity<WordStatisticsDTO> getStatisticsByWordId(@PathVariable("wordId") Long wordId) {
         return ResponseEntity.ok(wordStatisticsService.getWordStatisticsByWordId(wordId));
     }
 }

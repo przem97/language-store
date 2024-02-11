@@ -1,6 +1,6 @@
 package com.przem7.englishcourseapp.mapper;
 
-import com.przem7.englishcourseapp.model.dto.WordDto;
+import com.przem7.englishcourseapp.model.dto.WordDTO;
 import com.przem7.englishcourseapp.model.orm.Word;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +12,11 @@ public class WordMapper {
     @Autowired
     private ModelMapper modelMapper;
 
-    public WordDto convertToDto(Word word) {
-        return modelMapper.map(word, WordDto.class);
+    public WordDTO convertToDto(Word word) {
+        return modelMapper.map(word, WordDTO.class);
     }
 
-    public Word convertToEntity(WordDto wordDto) {
+    public Word convertToEntity(WordDTO wordDto) {
         return modelMapper.map(wordDto, Word.class);
     }
 }
