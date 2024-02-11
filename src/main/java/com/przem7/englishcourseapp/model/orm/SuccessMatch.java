@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class SuccessMatch extends Match {
 
     @ManyToOne
+    @JoinColumn(name = "word_statistics_id")
     private WordStatistics wordStatistics;
 
 }
