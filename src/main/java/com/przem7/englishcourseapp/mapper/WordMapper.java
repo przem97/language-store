@@ -4,12 +4,14 @@ import com.przem7.englishcourseapp.model.dto.WordDTO;
 import com.przem7.englishcourseapp.model.orm.Word;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
 public class WordMapper {
 
     @Autowired
+    @Qualifier("wordModelMapper")
     private ModelMapper modelMapper;
 
     public WordDTO convertToDto(Word word) {

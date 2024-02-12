@@ -23,6 +23,11 @@ public class ModelMapperConfiguration {
         return modelMapper;
     }
 
+    @Bean
+    public ModelMapper wordModelMapper() {
+        return new ModelMapper();
+    }
+
     private void setupTypeMapForFailureMatch(ModelMapper modelMapper) {
         TypeMap<WordStatistics, WordStatisticsDTO> typeMap = modelMapper.createTypeMap(WordStatistics.class, WordStatisticsDTO.class);
         typeMap.addMappings(
