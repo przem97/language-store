@@ -8,6 +8,7 @@ import com.przem7.englishcourseapp.repository.WordStatisticsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,7 @@ public class WordStatisticsService {
     private WordStatisticsRepository wordStatisticsRepository;
 
     @Autowired
+    @Qualifier("wordStatisticsModelMapper")
     private ModelMapper mapper;
 
     @Transactional

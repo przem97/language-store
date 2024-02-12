@@ -14,8 +14,8 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 public class ModelMapperConfiguration {
 
-    @Bean
-    public ModelMapper modelMapper() {
+    @Bean(name = "wordStatisticsModelMapper")
+    public ModelMapper wordStatisticsModelMapper() {
         ModelMapper modelMapper = new ModelMapper();
 
         setupTypeMapForFailureMatch(modelMapper);
@@ -23,7 +23,7 @@ public class ModelMapperConfiguration {
         return modelMapper;
     }
 
-    @Bean
+    @Bean(name = "wordModelMapper")
     public ModelMapper wordModelMapper() {
         return new ModelMapper();
     }
