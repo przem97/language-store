@@ -3,7 +3,7 @@ package com.przem7.englishcourseapp.controller;
 import com.przem7.englishcourseapp.exception.WordNotFoundException;
 import com.przem7.englishcourseapp.mapper.WordMapper;
 import com.przem7.englishcourseapp.model.dto.MatchDTO;
-import com.przem7.englishcourseapp.model.dto.WordDTO;
+import com.przem7.englishcourseapp.model.dto.WordDTOWithTranslations;
 import com.przem7.englishcourseapp.model.dto.WordStatisticsDTO;
 import com.przem7.englishcourseapp.model.orm.Word;
 
@@ -48,8 +48,9 @@ public class WordController {
     }
 
     @PostMapping("/words")
-    public ResponseEntity<Word> save(@RequestBody WordDTO wordDto) {
-        return ResponseEntity.ok(wordService.save(wordMapper.convertToEntity(wordDto)));
+    public ResponseEntity<WordDTOWithTranslations> save(@RequestBody WordDTOWithTranslations wordDto) {
+        Word word = wordMapper.convertToEntity(wordDto);
+        return ResponseEntity.ok(wordMapper.convertToDtoWithTranslations(wordService.save(word)));
     }
 
     @DeleteMapping("/words/{wordId}")

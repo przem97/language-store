@@ -2,7 +2,11 @@ package com.przem7.englishcourseapp.model.orm;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+import java.util.Set;
 
 @Entity
 @Data
@@ -19,8 +23,13 @@ public class Word {
     @Column(nullable = false, updatable = false)
     private Language language;
 
-    public Word(String word) {
-        this.word = word;
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @ManyToMany
+    private Set<Word> translations;
+
+    public Word(String value) {
+        this.value = value;
     }
 
 }

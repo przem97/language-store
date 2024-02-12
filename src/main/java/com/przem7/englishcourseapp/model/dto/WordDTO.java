@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 public class WordDTO {
 
     protected Long id;
-    protected String word;
+    protected String value;
     protected Language language;
 }

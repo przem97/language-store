@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -35,22 +36,30 @@ public class WordService {
     @Transactional
     public Word save(Word word) {
         Set<Word> translations = word.getTranslations();
+        Set<Word> savedTranslations = new HashSet<>();
         word.setTranslations(null);
 
         word = wordRepository.save(word);
+        log.info("word: " + word + " saved successfully!");
 
         for (Word translation : translations) {
             Word dbTranslation = wordRepository.findTopByValue(translation.getValue());
 
             if (dbTranslation != null) {
+                log.info("updating dbTranslation " + dbTranslation);
                 dbTranslation.getTranslations().add(word);
-                Word savedTranslation = wordRepository.save(translation);
-                translation.setId(savedTranslation.getId());
+                Word savedTranslation = wordRepository.save(dbTranslation);
+                savedTranslations.add(savedTranslation);
+            } else {
+                log.info("dbTranslation of " + translation.getValue() + " not found!");
             }
         }
 
-        word.setTranslations(translations);
+        log.info("setting translations for word: " + word);
+        word.setTranslations(savedTranslations);
         Word saved = wordRepository.save(word);
+
+        log.info("word: " + word + " updated successfully with translations: " + word.getTranslations());
 
         return saved;
     }
