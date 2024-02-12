@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class WordDTO {
 
-    private Long id;
-    private String word;
-    private Language language;
+    protected Long id;
+    protected String word;
+    protected Language language;
 }
