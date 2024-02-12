@@ -26,6 +26,11 @@ public class Word {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @ManyToMany
+    @JoinTable(
+            name = "word_translation",
+            joinColumns = @JoinColumn(name = "base_word_id"),
+            inverseJoinColumns = @JoinColumn(name = "translation_word_id")
+    )
     private Set<Word> translations;
 
     public Word(String value) {
