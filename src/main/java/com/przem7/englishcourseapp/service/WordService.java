@@ -4,6 +4,7 @@ import com.przem7.englishcourseapp.model.orm.Word;
 import com.przem7.englishcourseapp.repository.WordRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,8 +30,11 @@ public class WordService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public Optional<Word> findById(Long id) {
-        return wordRepository.findById(id);
+        Optional<Word> optionalWord = wordRepository.findById(id);
+        optionalWord.ifPresent(word -> Hibernate.initialize(word.getTranslations()));
+        return optionalWord;
     }
 
     @Transactional
