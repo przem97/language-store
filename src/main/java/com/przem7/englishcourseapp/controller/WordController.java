@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 public class WordController {
@@ -37,14 +38,20 @@ public class WordController {
     private WordMapper wordMapper;
 
     @GetMapping("/words")
-    public ResponseEntity<List<Word>> getWords() {
-        return ResponseEntity.ok(wordService.getWords());
+    public ResponseEntity<List<WordDTOWithTranslations>> getWords() {
+        return ResponseEntity.ok(wordService
+                .getWords()
+                .stream()
+                .map(wordMapper::convertToDtoWithTranslations)
+                .collect(Collectors.toList())
+        );
     }
 
     @GetMapping("/words/{wordId}")
-    public ResponseEntity<Word> findById(@PathVariable("wordId") Long wordId) {
+    public ResponseEntity<WordDTOWithTranslations> findById(@PathVariable("wordId") Long wordId) {
         Optional<Word> word = wordService.findById(wordId);
-        return word.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return word.map(w -> ResponseEntity.ok(wordMapper.convertToDtoWithTranslations(w)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/words")

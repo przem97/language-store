@@ -22,11 +22,13 @@ public class WordService {
     @Autowired
     private WordRepository wordRepository;
 
+    @Transactional
     public List<Word> getWords() {
         return StreamSupport
                 .stream(wordRepository
                         .findAll()
                         .spliterator(), false)
+                .peek(x -> Hibernate.initialize(x.getTranslations()))
                 .collect(Collectors.toList());
     }
 
