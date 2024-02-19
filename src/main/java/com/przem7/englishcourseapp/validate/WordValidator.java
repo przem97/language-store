@@ -12,8 +12,6 @@ public class WordValidator {
     private WordService wordService;
 
     public void validateIfExists(Long wordId) throws WordNotFoundException {
-        if (wordService.findById(wordId).isEmpty()) {
-            throw new WordNotFoundException(String.format("Word with id: %d not found", wordId));
-        }
+        wordService.findById(wordId);
     }
 }

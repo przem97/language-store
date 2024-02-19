@@ -11,15 +11,16 @@ import com.przem7.englishcourseapp.service.MatchService;
 import com.przem7.englishcourseapp.service.WordService;
 import com.przem7.englishcourseapp.service.WordStatisticsService;
 import com.przem7.englishcourseapp.validate.WordValidator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
+@Slf4j
 public class WordController {
 
     @Autowired
@@ -48,10 +49,9 @@ public class WordController {
     }
 
     @GetMapping("/words/{wordId}")
-    public ResponseEntity<WordDTOWithTranslations> findById(@PathVariable("wordId") Long wordId) {
-        Optional<Word> word = wordService.findById(wordId);
-        return word.map(w -> ResponseEntity.ok(wordMapper.convertToDtoWithTranslations(w)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<WordDTOWithTranslations> findById(@PathVariable("wordId") Long wordId) throws WordNotFoundException {
+        Word word = wordService.findById(wordId);
+        return ResponseEntity.ok(wordMapper.convertToDtoWithTranslations(word));
     }
 
     @PostMapping("/words")

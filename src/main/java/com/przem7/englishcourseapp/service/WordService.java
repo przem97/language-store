@@ -1,5 +1,6 @@
 package com.przem7.englishcourseapp.service;
 
+import com.przem7.englishcourseapp.exception.WordNotFoundException;
 import com.przem7.englishcourseapp.model.orm.Word;
 import com.przem7.englishcourseapp.repository.WordRepository;
 import jakarta.transaction.Transactional;
@@ -33,10 +34,13 @@ public class WordService {
     }
 
     @Transactional
-    public Optional<Word> findById(Long id) {
+    public Word findById(Long id) throws WordNotFoundException {
         Optional<Word> optionalWord = wordRepository.findById(id);
+        if (optionalWord.isEmpty()) {
+            throw new WordNotFoundException("No word with id " + id + " found");
+        }
         optionalWord.ifPresent(word -> Hibernate.initialize(word.getTranslations()));
-        return optionalWord;
+        return optionalWord.get();
     }
 
     @Transactional
