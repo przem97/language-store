@@ -25,15 +25,19 @@ public class WordService {
     private WordRepository wordRepository;
 
     @Transactional
-    public List<Word> getWords(Integer pageNumber, Integer pageSize, List<String> sortByColumns) {
+    public List<Word> getWords(Integer pageNumber,
+                               Integer pageSize,
+                               List<String> sortByColumns,
+                               String containing) {
         List<Sort.Order> orders = new ArrayList<>();
         for (String columnName : sortByColumns) {
             orders.add(Sort.Order.by(columnName));
         }
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by(orders));
+
         return StreamSupport
                 .stream(wordRepository
-                        .findAll(pageRequest)
+                        .findAllByValueContaining(containing, pageRequest)
                         .spliterator(), false)
                 .collect(Collectors.toList());
     }

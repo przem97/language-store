@@ -44,9 +44,11 @@ public class WordController {
     public ResponseEntity<List<WordDTO>> getWords(
             @RequestParam(value = "pageNumber", required = false, defaultValue = "0") Integer pageNumber,
             @RequestParam(value = "pageSize", required = false, defaultValue = "100") Integer pageSize,
-            @RequestParam(value = "sortByColumns", required = false, defaultValue = "id") List<String> sortByColumns) {
+            @RequestParam(value = "sortByColumns", required = false, defaultValue = "id") List<String> sortByColumns,
+            @RequestParam(value = "containing", required = false, defaultValue = "") String containing
+    ) {
         return ResponseEntity.ok(wordService
-                .getWords(pageNumber, pageSize, sortByColumns)
+                .getWords(pageNumber, pageSize, sortByColumns, containing)
                 .stream()
                 .map(wordMapper::convertToDto)
                 .collect(Collectors.toList())
