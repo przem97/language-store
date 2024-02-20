@@ -8,8 +8,10 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,8 +25,12 @@ public class WordService {
     private WordRepository wordRepository;
 
     @Transactional
-    public List<Word> getWords(Integer pageNumber, Integer pageSize) {
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+    public List<Word> getWords(Integer pageNumber, Integer pageSize, List<String> sortByColumns) {
+        List<Sort.Order> orders = new ArrayList<>();
+        for (String columnName : sortByColumns) {
+            orders.add(Sort.Order.by(columnName));
+        }
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by(orders));
         return StreamSupport
                 .stream(wordRepository
                         .findAll(pageRequest)
