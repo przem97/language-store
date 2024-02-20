@@ -1,5 +1,6 @@
 package com.przem7.englishcourseapp.exception.advice;
 
+import com.przem7.englishcourseapp.exception.WordAlreadyExistsException;
 import com.przem7.englishcourseapp.exception.WordNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,10 @@ public class ExceptionAdvice {
 
     public static final String DEFAULT_ERROR_VIEW = "error";
 
-    @ExceptionHandler(value = WordNotFoundException.class)
+    @ExceptionHandler(value = {
+        WordNotFoundException.class,
+        WordAlreadyExistsException.class
+    })
     public ModelAndView handle(HttpServletRequest req, Exception t) throws Exception {
         log.info("handling " + t.getClass().getSimpleName() + " exception...");
 
