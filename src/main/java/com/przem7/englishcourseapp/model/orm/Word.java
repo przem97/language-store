@@ -5,7 +5,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -22,6 +24,9 @@ public class Word {
 
     @Column(nullable = false, updatable = false)
     private Language language;
+
+    @CreationTimestamp
+    private LocalDateTime created;
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
