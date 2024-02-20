@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,10 +46,11 @@ public class WordController {
             @RequestParam(value = "pageNumber", required = false, defaultValue = "0") Integer pageNumber,
             @RequestParam(value = "pageSize", required = false, defaultValue = "100") Integer pageSize,
             @RequestParam(value = "sortByColumns", required = false, defaultValue = "id") List<String> sortByColumns,
-            @RequestParam(value = "containing", required = false, defaultValue = "") String containing
-    ) {
+            @RequestParam(value = "containing", required = false, defaultValue = "") String containing,
+            @RequestParam(value = "dateFrom", required = false) LocalDateTime dateFrom,
+            @RequestParam(value = "dateTo", required = false) LocalDateTime dateTo) {
         return ResponseEntity.ok(wordService
-                .getWords(pageNumber, pageSize, sortByColumns, containing)
+                .getWords(pageNumber, pageSize, sortByColumns, containing, dateFrom, dateTo)
                 .stream()
                 .map(wordMapper::convertToDto)
                 .collect(Collectors.toList())

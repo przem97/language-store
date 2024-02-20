@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,16 +29,45 @@ public class WordService {
     public List<Word> getWords(Integer pageNumber,
                                Integer pageSize,
                                List<String> sortByColumns,
-                               String containing) {
+                               String containing,
+                               LocalDateTime dateFrom,
+                               LocalDateTime dateTo) {
         List<Sort.Order> orders = new ArrayList<>();
         for (String columnName : sortByColumns) {
             orders.add(Sort.Order.by(columnName));
         }
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by(orders));
 
+        if (dateFrom == null && dateTo == null) {
+            return StreamSupport
+                    .stream(wordRepository
+                            .findAllByValueContaining(containing, pageRequest)
+                            .spliterator(), false)
+                    .collect(Collectors.toList());
+        }
+
+        if (dateFrom != null && dateTo == null) {
+            return StreamSupport
+                    .stream(wordRepository
+                            .findAllByValueContainingAndCreatedAfter(containing, dateFrom, pageRequest)
+                            .spliterator(), false)
+                    .collect(Collectors.toList());
+        }
+
+        if (dateFrom == null) {
+            return StreamSupport
+                    .stream(wordRepository
+                            .findAllByValueContainingAndCreatedBefore(containing, dateTo, pageRequest)
+                            .spliterator(), false)
+                    .collect(Collectors.toList());
+        }
+
         return StreamSupport
                 .stream(wordRepository
-                        .findAllByValueContaining(containing, pageRequest)
+                        .findAllByValueContainingAndCreatedBetween(containing,
+                                dateFrom,
+                                dateTo,
+                                pageRequest)
                         .spliterator(), false)
                 .collect(Collectors.toList());
     }
