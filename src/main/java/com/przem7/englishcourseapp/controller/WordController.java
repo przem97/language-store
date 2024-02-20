@@ -44,7 +44,7 @@ public class WordController {
     public ResponseEntity<List<WordDTO>> getWords(
             @RequestParam(value = "pageNumber", required = false, defaultValue = "0") Integer pageNumber,
             @RequestParam(value = "pageSize", required = false, defaultValue = "100") Integer pageSize,
-            @RequestParam(value = "sortByColumns", required = false) List<String> sortByColumns) {
+            @RequestParam(value = "sortByColumns", required = false, defaultValue = "id") List<String> sortByColumns) {
         return ResponseEntity.ok(wordService
                 .getWords(pageNumber, pageSize, sortByColumns)
                 .stream()
