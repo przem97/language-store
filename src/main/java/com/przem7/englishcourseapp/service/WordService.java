@@ -7,6 +7,7 @@ import com.przem7.englishcourseapp.repository.WordRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,10 +23,11 @@ public class WordService {
     private WordRepository wordRepository;
 
     @Transactional
-    public List<Word> getWords() {
+    public List<Word> getWords(Integer pageNumber, Integer pageSize) {
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
         return StreamSupport
                 .stream(wordRepository
-                        .findAll()
+                        .findAll(pageRequest)
                         .spliterator(), false)
                 .collect(Collectors.toList());
     }

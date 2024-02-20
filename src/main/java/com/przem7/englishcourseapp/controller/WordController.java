@@ -41,9 +41,11 @@ public class WordController {
     private WordMapper wordMapper;
 
     @GetMapping("/words")
-    public ResponseEntity<List<WordDTO>> getWords() {
+    public ResponseEntity<List<WordDTO>> getWords(
+            @RequestParam(value = "pageNumber", required = false, defaultValue = "0") Integer pageNumber,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "100") Integer pageSize) {
         return ResponseEntity.ok(wordService
-                .getWords()
+                .getWords(pageNumber, pageSize)
                 .stream()
                 .map(wordMapper::convertToDto)
                 .collect(Collectors.toList())
