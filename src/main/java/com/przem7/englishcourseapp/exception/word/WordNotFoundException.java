@@ -1,6 +1,4 @@
-package com.przem7.englishcourseapp.exception;
-
-import com.przem7.englishcourseapp.model.orm.Word;
+package com.przem7.englishcourseapp.exception.word;
 
 public class WordNotFoundException extends Exception {
 

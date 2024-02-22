@@ -1,7 +1,7 @@
 package com.przem7.englishcourseapp.service;
 
-import com.przem7.englishcourseapp.exception.WordAlreadyExistsException;
-import com.przem7.englishcourseapp.exception.WordNotFoundException;
+import com.przem7.englishcourseapp.exception.word.WordAlreadyExistsException;
+import com.przem7.englishcourseapp.exception.word.WordNotFoundException;
 import com.przem7.englishcourseapp.model.orm.Word;
 import com.przem7.englishcourseapp.repository.WordRepository;
 import jakarta.transaction.Transactional;

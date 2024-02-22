@@ -1,6 +1,6 @@
 package com.przem7.englishcourseapp.validate;
 
-import com.przem7.englishcourseapp.exception.WordNotFoundException;
+import com.przem7.englishcourseapp.exception.word.WordNotFoundException;
 import com.przem7.englishcourseapp.service.WordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

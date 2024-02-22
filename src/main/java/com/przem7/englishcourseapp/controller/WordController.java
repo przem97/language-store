@@ -1,7 +1,7 @@
 package com.przem7.englishcourseapp.controller;
 
-import com.przem7.englishcourseapp.exception.WordAlreadyExistsException;
-import com.przem7.englishcourseapp.exception.WordNotFoundException;
+import com.przem7.englishcourseapp.exception.word.WordAlreadyExistsException;
+import com.przem7.englishcourseapp.exception.word.WordNotFoundException;
 import com.przem7.englishcourseapp.mapper.WordMapper;
 import com.przem7.englishcourseapp.model.dto.MatchDTO;
 import com.przem7.englishcourseapp.model.dto.WordDTO;

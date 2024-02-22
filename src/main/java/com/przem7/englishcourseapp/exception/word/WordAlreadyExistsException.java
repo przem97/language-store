@@ -1,4 +1,4 @@
-package com.przem7.englishcourseapp.exception;
+package com.przem7.englishcourseapp.exception.word;
 
 import com.przem7.englishcourseapp.model.orm.Word;
 
