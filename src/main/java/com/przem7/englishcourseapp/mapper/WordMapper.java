@@ -25,7 +25,11 @@ public class WordMapper {
         return modelMapper.map(word, WordDTO.class);
     }
 
-    public Word convertToEntity(WordDTOWithTranslations wordDto) {
+    public Word convertToEntity(WordDTOWithTranslations wordDTOWithTranslations) {
+        return modelMapper.map(wordDTOWithTranslations, Word.class);
+    }
+
+    public Word convertToEntity(WordDTO wordDto) {
         return modelMapper.map(wordDto, Word.class);
     }
 }
