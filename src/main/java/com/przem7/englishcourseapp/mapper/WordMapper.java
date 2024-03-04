@@ -11,9 +11,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class WordMapper {
 
-    @Autowired
-    @Qualifier("wordModelMapper")
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
+
+    public WordMapper(@Qualifier("wordModelMapper") ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
+    }
 
     public WordDTOWithTranslations convertToDtoWithTranslations(Word word) {
         return modelMapper.map(word, WordDTOWithTranslations.class);
