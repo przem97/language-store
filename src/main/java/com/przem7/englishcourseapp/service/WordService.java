@@ -28,12 +28,12 @@ public class WordService {
     @Transactional
     public List<Word> getWords(Integer pageNumber,
                                Integer pageSize,
-                               List<String> sortByColumns,
+                               List<String> sortBy,
                                String containing,
                                LocalDateTime dateFrom,
                                LocalDateTime dateTo) {
         List<Sort.Order> orders = new ArrayList<>();
-        for (String columnName : sortByColumns) {
+        for (String columnName : sortBy) {
             orders.add(Sort.Order.by(columnName));
         }
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by(orders));

@@ -53,12 +53,12 @@ public class WordController {
     public ResponseEntity<List<WordDTO>> getWords(
             @RequestParam(value = "pageNumber", required = false, defaultValue = "0") Integer pageNumber,
             @RequestParam(value = "pageSize", required = false, defaultValue = "100") Integer pageSize,
-            @RequestParam(value = "sortByColumns", required = false, defaultValue = "id") List<String> sortByColumns,
+            @RequestParam(value = "sortBy", required = false, defaultValue = "id") List<String> sortBy,
             @RequestParam(value = "containing", required = false, defaultValue = "") String containing,
             @RequestParam(value = "dateFrom", required = false) LocalDateTime dateFrom,
             @RequestParam(value = "dateTo", required = false) LocalDateTime dateTo) {
         return ResponseEntity.ok(wordService
-                .getWords(pageNumber, pageSize, sortByColumns, containing, dateFrom, dateTo)
+                .getWords(pageNumber, pageSize, sortBy, containing, dateFrom, dateTo)
                 .stream()
                 .map(wordMapper::convertToDto)
                 .collect(Collectors.toList())
