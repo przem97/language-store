@@ -1,5 +1,6 @@
 package com.przem7.englishcourseapp.exception.advice;
 
+import com.przem7.englishcourseapp.exception.EnglishCourseStoreException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -11,11 +12,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 @ControllerAdvice
 @Slf4j
-public class ExceptionAdvice {
+public class WordExceptionAdvice {
 
     public static final String DEFAULT_ERROR_VIEW = "error";
 
-    @ExceptionHandler(value = Exception.class)
+    @ExceptionHandler(value = EnglishCourseStoreException.class)
     public ModelAndView handle(HttpServletRequest req, Exception t) throws Exception {
         log.info("handling " + t.getClass().getSimpleName() + " exception...");
 
@@ -24,6 +25,7 @@ public class ExceptionAdvice {
         }
 
         ModelAndView mav = new ModelAndView();
+        mav.setStatus(HttpStatus.NOT_FOUND);
         mav.addObject("exception", t);
         mav.addObject("url", req.getRequestURL());
         mav.addObject("code", HttpStatus.NOT_FOUND.value());

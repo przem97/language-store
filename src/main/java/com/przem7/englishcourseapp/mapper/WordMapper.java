@@ -11,9 +11,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class WordMapper {
 
-    @Autowired
-    @Qualifier("wordModelMapper")
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
+
+    public WordMapper(@Qualifier("wordModelMapper") ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
+    }
 
     public WordDTOWithTranslations convertToDtoWithTranslations(Word word) {
         return modelMapper.map(word, WordDTOWithTranslations.class);
@@ -23,7 +25,11 @@ public class WordMapper {
         return modelMapper.map(word, WordDTO.class);
     }
 
-    public Word convertToEntity(WordDTOWithTranslations wordDto) {
+    public Word convertToEntity(WordDTOWithTranslations wordDTOWithTranslations) {
+        return modelMapper.map(wordDTOWithTranslations, Word.class);
+    }
+
+    public Word convertToEntity(WordDTO wordDto) {
         return modelMapper.map(wordDto, Word.class);
     }
 }

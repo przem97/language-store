@@ -1,6 +1,5 @@
 package com.przem7.englishcourseapp.controller;
 
-import com.przem7.englishcourseapp.exception.WordNotFoundException;
 import com.przem7.englishcourseapp.model.orm.FailureMatch;
 import com.przem7.englishcourseapp.service.FailureMatchService;
 import org.springframework.beans.factory.annotation.Autowired;

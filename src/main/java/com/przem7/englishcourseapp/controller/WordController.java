@@ -1,7 +1,7 @@
 package com.przem7.englishcourseapp.controller;
 
-import com.przem7.englishcourseapp.exception.WordAlreadyExistsException;
-import com.przem7.englishcourseapp.exception.WordNotFoundException;
+import com.przem7.englishcourseapp.exception.word.WordAlreadyExistsException;
+import com.przem7.englishcourseapp.exception.word.WordNotFoundException;
 import com.przem7.englishcourseapp.mapper.WordMapper;
 import com.przem7.englishcourseapp.model.dto.MatchDTO;
 import com.przem7.englishcourseapp.model.dto.WordDTO;
@@ -15,6 +15,7 @@ import com.przem7.englishcourseapp.service.WordStatisticsService;
 import com.przem7.englishcourseapp.validate.WordValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,7 +42,10 @@ public class WordController {
     @Autowired
     private WordMapper wordMapper;
 
-    @GetMapping("/words")
+    @GetMapping(
+            value = "/words",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<List<WordDTO>> getWords(
             @RequestParam(value = "pageNumber", required = false, defaultValue = "0") Integer pageNumber,
             @RequestParam(value = "pageSize", required = false, defaultValue = "100") Integer pageSize,
@@ -57,14 +61,21 @@ public class WordController {
         );
     }
 
-    @GetMapping("/words/{wordId}")
+    @GetMapping(
+            value = "/words/{wordId}",
+            produces = { MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_VALUE }
+    )
     public ResponseEntity<WordDTO> findById(@PathVariable("wordId") Long wordId) throws WordNotFoundException {
         Word word = wordService.findById(wordId);
         return ResponseEntity.ok(wordMapper.convertToDto(word));
     }
 
-    @PostMapping("/words")
-    public ResponseEntity<WordDTO> save(@RequestBody WordDTOWithTranslations wordDto) throws WordAlreadyExistsException {
+    @PostMapping(
+            value = "/words",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = { MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_VALUE }
+    )
+    public ResponseEntity<WordDTO> save(@RequestBody WordDTO wordDto) throws WordAlreadyExistsException {
         Word word = wordMapper.convertToEntity(wordDto);
         return ResponseEntity.ok(wordMapper.convertToDto(wordService.save(word)));
     }
