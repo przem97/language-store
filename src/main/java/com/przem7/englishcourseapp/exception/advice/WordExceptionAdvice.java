@@ -1,6 +1,7 @@
 package com.przem7.englishcourseapp.exception.advice;
 
 import com.przem7.englishcourseapp.exception.EnglishCourseStoreException;
+import com.przem7.englishcourseapp.exception.InvalidPayloadException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -16,7 +17,7 @@ public class WordExceptionAdvice {
 
     public static final String DEFAULT_ERROR_VIEW = "error";
 
-    @ExceptionHandler(value = EnglishCourseStoreException.class)
+    @ExceptionHandler(value = { EnglishCourseStoreException.class, InvalidPayloadException.class })
     public ModelAndView handle(HttpServletRequest req, Exception t) throws Exception {
         log.info("handling " + t.getClass().getSimpleName() + " exception...");
 

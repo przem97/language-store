@@ -1,4 +1,4 @@
-package com.przem7.englishcourseapp.validate;
+package com.przem7.englishcourseapp.validation;
 
 import com.przem7.englishcourseapp.exception.word.WordNotFoundException;
 import com.przem7.englishcourseapp.service.WordService;

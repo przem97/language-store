@@ -1,25 +1,29 @@
 package com.przem7.englishcourseapp.controller;
 
+import com.przem7.englishcourseapp.exception.InvalidPayloadException;
 import com.przem7.englishcourseapp.exception.word.WordAlreadyExistsException;
 import com.przem7.englishcourseapp.exception.word.WordNotFoundException;
 import com.przem7.englishcourseapp.mapper.WordMapper;
 import com.przem7.englishcourseapp.model.dto.MatchDTO;
 import com.przem7.englishcourseapp.model.dto.WordDTO;
-import com.przem7.englishcourseapp.model.dto.WordDTOWithTranslations;
 import com.przem7.englishcourseapp.model.dto.WordStatisticsDTO;
 import com.przem7.englishcourseapp.model.orm.Word;
 
 import com.przem7.englishcourseapp.service.MatchService;
 import com.przem7.englishcourseapp.service.WordService;
 import com.przem7.englishcourseapp.service.WordStatisticsService;
-import com.przem7.englishcourseapp.validate.WordValidator;
+import com.przem7.englishcourseapp.validation.WordValidator;
+import com.przem7.englishcourseapp.validation.group.CreateWord;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,8 +79,23 @@ public class WordController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = { MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_VALUE }
     )
-    public ResponseEntity<WordDTO> save(@RequestBody WordDTO wordDto) throws WordAlreadyExistsException {
+    public ResponseEntity<WordDTO> save(@Validated(CreateWord.class) @RequestBody WordDTO wordDto,
+                                        BindingResult result) throws WordAlreadyExistsException,
+            InvalidPayloadException {
+        if (result.hasErrors()) {
+            log.debug("word validation has errors! word=" + wordDto);
+            String[] violationMessages = result.getFieldErrors()
+                    .stream()
+                    .map(x -> x.getField() + " " + x.getDefaultMessage() + " (actual value=" + x.getRejectedValue() + ")")
+                    .toArray(String[]::new);
+
+            String message = Arrays.toString(violationMessages);
+            throw new InvalidPayloadException(message);
+        }
+
+        log.debug("word to save=" + wordDto);
         Word word = wordMapper.convertToEntity(wordDto);
+
         return ResponseEntity.ok(wordMapper.convertToDto(wordService.save(word)));
     }
 
