@@ -14,6 +14,8 @@ import com.przem7.englishcourseapp.service.WordService;
 import com.przem7.englishcourseapp.service.WordStatisticsService;
 import com.przem7.englishcourseapp.validation.WordValidator;
 import com.przem7.englishcourseapp.validation.group.CreateWord;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -50,13 +52,14 @@ public class WordController {
             value = "/words",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
+    @Valid
     public ResponseEntity<List<WordDTO>> getWords(
-            @RequestParam(value = "pageNumber", required = false, defaultValue = "0") Integer pageNumber,
-            @RequestParam(value = "pageSize", required = false, defaultValue = "100") Integer pageSize,
-            @RequestParam(value = "sortBy", required = false, defaultValue = "id") List<String> sortBy,
-            @RequestParam(value = "containing", required = false, defaultValue = "") String containing,
-            @RequestParam(value = "dateFrom", required = false) LocalDateTime dateFrom,
-            @RequestParam(value = "dateTo", required = false) LocalDateTime dateTo) {
+            @RequestParam(value = "pageNumber", required = false, defaultValue = "0") @PositiveOrZero Integer pageNumber,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "100") @Positive Integer pageSize,
+            @RequestParam(value = "sortBy", required = false, defaultValue = "id") @NotEmpty List<String> sortBy,
+            @RequestParam(value = "containing", required = false, defaultValue = "") @NotBlank String containing,
+            @RequestParam(value = "dateFrom", required = false) @NotNull LocalDateTime dateFrom,
+            @RequestParam(value = "dateTo", required = false) @NotNull LocalDateTime dateTo) {
         return ResponseEntity.ok(wordService
                 .getWords(pageNumber, pageSize, sortBy, containing, dateFrom, dateTo)
                 .stream()
@@ -79,11 +82,12 @@ public class WordController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = { MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_VALUE }
     )
-    public ResponseEntity<WordDTO> save(@Validated(CreateWord.class) @RequestBody WordDTO wordDto,
+    @Validated(CreateWord.class)
+    public ResponseEntity<WordDTO> save(@RequestBody WordDTO wordDto,
                                         BindingResult result) throws WordAlreadyExistsException,
             InvalidPayloadException {
         if (result.hasErrors()) {
-            log.debug("word validation has errors! word=" + wordDto);
+            log.debug("word validation has failed! word=" + wordDto);
             String[] violationMessages = result.getFieldErrors()
                     .stream()
                     .map(x -> x.getField() + " " + x.getDefaultMessage() + " (actual value=" + x.getRejectedValue() + ")")
@@ -100,18 +104,21 @@ public class WordController {
     }
 
     @DeleteMapping("/words/{wordId}")
-    public ResponseEntity<Void> deleteById(@PathVariable("wordId") Long wordId) {
+    @Valid
+    public ResponseEntity<Void> deleteById(@PathVariable("wordId") @PositiveOrZero Long wordId) {
         wordService.deleteById(wordId);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/words/{wordId}/statistics")
-    public ResponseEntity<WordStatisticsDTO> getStatisticsByWordId(@PathVariable("wordId") Long wordId) {
+    @Valid
+    public ResponseEntity<WordStatisticsDTO> getStatisticsByWordId(@PathVariable("wordId") @PositiveOrZero Long wordId) {
         return ResponseEntity.ok(wordStatisticsService.getWordStatisticsByWordId(wordId));
     }
 
     @PostMapping("/words/{wordId}/matches")
-    public ResponseEntity<Void> save(@PathVariable("wordId") Long wordId,
+    @Valid
+    public ResponseEntity<Void> save(@PathVariable("wordId") @PositiveOrZero Long wordId,
                                      @RequestBody MatchDTO matchDto) throws WordNotFoundException {
         wordValidator.validateIfExists(wordId);
         matchService.save(wordId, matchDto);
