@@ -10,7 +10,6 @@ import com.przem7.englishcourseapp.model.orm.Word;
 import com.przem7.englishcourseapp.service.MatchService;
 import com.przem7.englishcourseapp.service.WordService;
 import com.przem7.englishcourseapp.service.WordStatisticsService;
-import com.przem7.englishcourseapp.validate.WordValidator;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,9 +49,6 @@ public class WordControllerTest {
 
     @MockBean
     private MatchService matchService;
-
-    @MockBean
-    private WordValidator wordValidator;
 
     @Autowired
     private WordMapper wordMapper;

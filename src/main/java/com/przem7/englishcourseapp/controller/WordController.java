@@ -12,7 +12,6 @@ import com.przem7.englishcourseapp.model.orm.Word;
 import com.przem7.englishcourseapp.service.MatchService;
 import com.przem7.englishcourseapp.service.WordService;
 import com.przem7.englishcourseapp.service.WordStatisticsService;
-import com.przem7.englishcourseapp.validation.WordValidator;
 import com.przem7.englishcourseapp.validation.group.CreateWord;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -41,9 +40,6 @@ public class WordController {
 
     @Autowired
     private MatchService matchService;
-
-    @Autowired
-    private WordValidator wordValidator;
 
     @Autowired
     private WordMapper wordMapper;
@@ -120,7 +116,6 @@ public class WordController {
     @Valid
     public ResponseEntity<Void> save(@PathVariable("wordId") @PositiveOrZero Long wordId,
                                      @RequestBody MatchDTO matchDto) throws WordNotFoundException {
-        wordValidator.validateIfExists(wordId);
         matchService.save(wordId, matchDto);
 
         return ResponseEntity.ok().build();
