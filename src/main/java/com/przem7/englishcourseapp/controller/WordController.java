@@ -52,10 +52,10 @@ public class WordController {
     public ResponseEntity<List<WordDTO>> getWords(
             @RequestParam(value = "pageNumber", required = false, defaultValue = "0") @PositiveOrZero Integer pageNumber,
             @RequestParam(value = "pageSize", required = false, defaultValue = "100") @Positive Integer pageSize,
-            @RequestParam(value = "sortBy", required = false, defaultValue = "id") @NotEmpty List<String> sortBy,
-            @RequestParam(value = "containing", required = false, defaultValue = "") @NotBlank String containing,
-            @RequestParam(value = "dateFrom", required = false) @NotNull LocalDateTime dateFrom,
-            @RequestParam(value = "dateTo", required = false) @NotNull LocalDateTime dateTo) {
+            @RequestParam(value = "sortBy", required = false, defaultValue = "[\"id\"]") @NotEmpty List<String> sortBy,
+            @RequestParam(value = "containing", required = false, defaultValue = "") String containing,
+            @RequestParam(value = "dateFrom", required = false) LocalDateTime dateFrom,
+            @RequestParam(value = "dateTo", required = false) LocalDateTime dateTo) {
         return ResponseEntity.ok(wordService
                 .getWords(pageNumber, pageSize, sortBy, containing, dateFrom, dateTo)
                 .stream()
