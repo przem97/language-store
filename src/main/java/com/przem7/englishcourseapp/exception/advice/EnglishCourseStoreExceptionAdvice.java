@@ -2,6 +2,9 @@ package com.przem7.englishcourseapp.exception.advice;
 
 import com.przem7.englishcourseapp.exception.EnglishCourseStoreException;
 import com.przem7.englishcourseapp.exception.word.WordNotFoundException;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.*;
@@ -49,11 +52,10 @@ public class EnglishCourseStoreExceptionAdvice extends ResponseEntityExceptionHa
             String parameterName = ex.getAllValidationResults().get(i).getMethodParameter().getParameterName();
             Object argument = ex.getAllValidationResults().get(i).getArgument();
 
-            String key = "error_" + i;
-            properties.put(key, ex.getAllValidationResults().get(i)
+            properties.put(parameterName, ex.getAllValidationResults().get(i)
                     .getResolvableErrors()
                     .stream()
-                    .map(x -> parameterName + " " + x.getDefaultMessage() + ". Actual value=" + argument)
+                    .map(x -> new ParamErrorDetail(x.getDefaultMessage(), argument == null ? "null" : argument.toString()))
                     .collect(Collectors.toList()))
             ;
         }
@@ -61,5 +63,13 @@ public class EnglishCourseStoreExceptionAdvice extends ResponseEntityExceptionHa
         problemDetail.setProperties(properties);
 
         return this.handleExceptionInternal(ex, problemDetail, headers, HttpStatus.BAD_REQUEST, request);
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    private static class ParamErrorDetail {
+        private String message;
+        private String value;
     }
 }
