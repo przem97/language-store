@@ -1,6 +1,5 @@
 package com.przem7.englishcourseapp.controller;
 
-import com.przem7.englishcourseapp.exception.InvalidPayloadException;
 import com.przem7.englishcourseapp.exception.word.WordAlreadyExistsException;
 import com.przem7.englishcourseapp.exception.word.WordNotFoundException;
 import com.przem7.englishcourseapp.mapper.WordMapper;
@@ -19,12 +18,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,7 +65,8 @@ public class WordController {
             value = "/words/{wordId}",
             produces = { MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_VALUE }
     )
-    public ResponseEntity<WordDTO> findById(@PathVariable("wordId") Long wordId) throws WordNotFoundException {
+    public ResponseEntity<WordDTO> findById(@PathVariable("wordId") Long wordId)
+            throws WordNotFoundException {
         Word word = wordService.findById(wordId);
         return ResponseEntity.ok(wordMapper.convertToDto(word));
     }
@@ -78,24 +76,10 @@ public class WordController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = { MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_VALUE }
     )
-    @Validated(CreateWord.class)
-    public ResponseEntity<WordDTO> save(@RequestBody WordDTO wordDto,
-                                        BindingResult result) throws WordAlreadyExistsException,
-            InvalidPayloadException {
-        if (result.hasErrors()) {
-            log.debug("word validation has failed! word=" + wordDto);
-            String[] violationMessages = result.getFieldErrors()
-                    .stream()
-                    .map(x -> x.getField() + " " + x.getDefaultMessage() + " (actual value=" + x.getRejectedValue() + ")")
-                    .toArray(String[]::new);
 
-            String message = Arrays.toString(violationMessages);
-            throw new InvalidPayloadException(message);
-        }
-
-        log.debug("word to save=" + wordDto);
+    public ResponseEntity<WordDTO> save(@RequestBody @Validated(CreateWord.class) WordDTO wordDto)
+            throws WordAlreadyExistsException {
         Word word = wordMapper.convertToEntity(wordDto);
-
         return ResponseEntity.ok(wordMapper.convertToDto(wordService.save(word)));
     }
 

@@ -1,14 +1,15 @@
 package com.przem7.englishcourseapp.exception.advice;
 
 import com.przem7.englishcourseapp.exception.EnglishCourseStoreException;
+import com.przem7.englishcourseapp.exception.word.WordAlreadyExistsException;
 import com.przem7.englishcourseapp.exception.word.WordNotFoundException;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.przem7.englishcourseapp.model.dto.error.ParamErrorDetail;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.*;
 import org.springframework.lang.Nullable;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -24,23 +25,17 @@ import java.util.stream.Collectors;
 public class EnglishCourseStoreExceptionAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = { EnglishCourseStoreException.class })
-    protected ResponseEntity<Object> handleEnglishCourseStoreException(EnglishCourseStoreException exception, WebRequest webRequest) {
-        log.info("handling " + exception.getClass().getSimpleName() + " exception...");
-
-        if (exception instanceof WordNotFoundException) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body("");
-
+    protected ResponseEntity<Object> handleEnglishCourseStoreException(EnglishCourseStoreException exception,
+                                                                       WebRequest webRequest) {
+        if (exception instanceof WordNotFoundException wordNotFoundException) {
+            return this.handleWordNotFoundException(wordNotFoundException, webRequest);
+        } else if (exception instanceof WordAlreadyExistsException wordAlreadyExistsException) {
+            return this.handleWordAlreadyExistsException(wordAlreadyExistsException, webRequest);
         }
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body("");
 
-
-//        return handleExceptionInternal(exception, "{\"message\": \"" + exception.getMessage() + "\"}",
-//                new HttpHeaders(), HttpStatus.CONFLICT, webRequest);
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
+        return handleExceptionInternal(exception, problemDetail,
+                new HttpHeaders(), HttpStatus.OK, webRequest);
     }
     @Override
     @Nullable
@@ -65,11 +60,51 @@ public class EnglishCourseStoreExceptionAdvice extends ResponseEntityExceptionHa
         return this.handleExceptionInternal(ex, problemDetail, headers, HttpStatus.BAD_REQUEST, request);
     }
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    private static class ParamErrorDetail {
-        private String message;
-        private String value;
+    @Override
+    @Nullable
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        ProblemDetail problemDetail = ex.updateAndGetBody(this.getMessageSource(), LocaleContextHolder.getLocale());
+        Map<String, Object> properties = problemDetail.getProperties() == null ? new HashMap<>() : problemDetail.getProperties();
+
+        for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
+            properties.put(fieldError.getField(),
+                            new ParamErrorDetail(fieldError.getDefaultMessage(),
+                                    fieldError.getRejectedValue() == null ? "null" : fieldError.getRejectedValue().toString()));
+        }
+
+        HttpStatus responseStatus = HttpStatus.OK;
+
+        problemDetail.setProperties(properties);
+        problemDetail.setStatus(responseStatus);
+
+        return this.handleExceptionInternal(ex, problemDetail, headers, responseStatus, request);
+    }
+
+    private ResponseEntity<Object> handleWordNotFoundException(WordNotFoundException exception,
+                                                               WebRequest webRequest) {
+        HttpStatus responseStatus = HttpStatus.OK;
+
+        ProblemDetail problemDetail = this.createProblemDetail(exception,
+                responseStatus,
+                exception.getMessage(),
+                null,
+                null,
+                webRequest);
+
+        return this.handleExceptionInternal(exception, problemDetail, new HttpHeaders(), responseStatus, webRequest);
+    }
+
+    private ResponseEntity<Object> handleWordAlreadyExistsException(WordAlreadyExistsException exception,
+                                                                    WebRequest webRequest) {
+        HttpStatus responseStatus = HttpStatus.OK;
+
+        ProblemDetail problemDetail = this.createProblemDetail(exception,
+                responseStatus,
+                exception.getMessage(),
+                null,
+                null,
+                webRequest);
+
+        return this.handleExceptionInternal(exception, problemDetail, new HttpHeaders(), responseStatus, webRequest);
     }
 }
