@@ -17,17 +17,20 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.MultiValueMap;
 
-import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -112,6 +115,83 @@ public class WordControllerTest {
     }
 
     @Test
+    void getWordsShouldReturnValidationFailureOnNegativePageNumberGiven() throws Exception {
+        // given
+        MultiValueMap<String, String> params = new HttpHeaders();
+        params.add("pageNumber", "-432");
+
+        // when
+        ResultActions getWords = this.mockMvc.perform(get("/words")
+                .params(params)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        getWords.andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE))
+                .andExpect(jsonPath("$.title").value("OK"))
+                .andExpect(jsonPath("$.status").value(HttpStatus.OK.value()))
+                .andExpect(jsonPath("$.detail").value("Validation failure"))
+                .andExpect(jsonPath("$.instance").value("/words"))
+                .andExpect(jsonPath("$.pageNumber").isArray())
+                .andExpect(jsonPath("$.pageNumber", hasSize(1)))
+                .andExpect(jsonPath("$.pageNumber[0].message").value("must be greater than or equal to 0"))
+                .andExpect(jsonPath("$.pageNumber[0].value").value("-432"));
+    }
+
+    @Test
+    void getWordsShouldReturnValidationFailureOnNegativePageSizeGiven() throws Exception {
+        // given
+        MultiValueMap<String, String> params = new HttpHeaders();
+        params.add("pageSize", "-999");
+
+        // when
+        ResultActions getWords = this.mockMvc.perform(get("/words")
+                .params(params)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        getWords.andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE))
+                .andExpect(jsonPath("$.title").value("OK"))
+                .andExpect(jsonPath("$.status").value(HttpStatus.OK.value()))
+                .andExpect(jsonPath("$.detail").value("Validation failure"))
+                .andExpect(jsonPath("$.instance").value("/words"))
+                .andExpect(jsonPath("$.pageSize").isArray())
+                .andExpect(jsonPath("$.pageSize", hasSize(1)))
+                .andExpect(jsonPath("$.pageSize[0].message").value("must be greater than 0"))
+                .andExpect(jsonPath("$.pageSize[0].value").value("-999"));
+    }
+
+    @Test
+    void getWordsShouldReturnValidationFailureOnNegativePageSizeAndPageNumberGiven() throws Exception {
+        // given
+        MultiValueMap<String, String> params = new HttpHeaders();
+        params.add("pageSize", "-1213");
+        params.add("pageNumber", "-9990");
+
+        // when
+        ResultActions getWords = this.mockMvc.perform(get("/words")
+                .params(params)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // then
+        getWords.andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE))
+                .andExpect(jsonPath("$.title").value("OK"))
+                .andExpect(jsonPath("$.status").value(HttpStatus.OK.value()))
+                .andExpect(jsonPath("$.detail").value("Validation failure"))
+                .andExpect(jsonPath("$.instance").value("/words"))
+                .andExpect(jsonPath("$.pageSize").isArray())
+                .andExpect(jsonPath("$.pageNumber").isArray())
+                .andExpect(jsonPath("$.pageSize", hasSize(1)))
+                .andExpect(jsonPath("$.pageNumber", hasSize(1)))
+                .andExpect(jsonPath("$.pageSize[0].message").value("must be greater than 0"))
+                .andExpect(jsonPath("$.pageSize[0].value").value("-1213"))
+                .andExpect(jsonPath("$.pageNumber[0].message").value("must be greater than or equal to 0"))
+                .andExpect(jsonPath("$.pageNumber[0].value").value("-9990"));
+    }
+
+    @Test
     void findByIdShouldReturnFoundWord() throws Exception {
         // given
         Word word = WordFactory.create();
@@ -132,7 +212,7 @@ public class WordControllerTest {
     }
 
     @Test
-    void findByIdShouldHandleWordNotFoundException() throws Exception {
+    void findByIdShouldReturnNoContent() throws Exception {
         // given
         Long id = 432L;
         Throwable throwable = new WordNotFoundException(id);
@@ -142,8 +222,12 @@ public class WordControllerTest {
         ResultActions findWordById = this.mockMvc.perform(get("/words/{id}", id));
 
         // then
-        findWordById.andExpect(status().isNotFound())
-                .andExpect(content().contentType(MediaType.TEXT_HTML + ";charset=" + StandardCharsets.UTF_8));
+        findWordById.andExpect(status().isNoContent())
+                .andExpect(jsonPath("$.title").value("No Content"))
+                .andExpect(jsonPath("$.status").value(HttpStatus.NO_CONTENT.value()))
+                .andExpect(jsonPath("$.detail").value("No word with id " + id + " found"))
+                .andExpect(jsonPath("$.instance").value("/words/" + id))
+                .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON));
     }
 
     @Test

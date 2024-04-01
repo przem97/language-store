@@ -54,10 +54,12 @@ public class EnglishCourseStoreExceptionAdvice extends ResponseEntityExceptionHa
                     .collect(Collectors.toList()))
             ;
         }
+        HttpStatus responseStatus = HttpStatus.OK;
 
         problemDetail.setProperties(properties);
+        problemDetail.setStatus(responseStatus);
 
-        return this.handleExceptionInternal(ex, problemDetail, headers, HttpStatus.BAD_REQUEST, request);
+        return this.handleExceptionInternal(ex, problemDetail, headers, responseStatus, request);
     }
 
     @Override
@@ -82,7 +84,7 @@ public class EnglishCourseStoreExceptionAdvice extends ResponseEntityExceptionHa
 
     private ResponseEntity<Object> handleWordNotFoundException(WordNotFoundException exception,
                                                                WebRequest webRequest) {
-        HttpStatus responseStatus = HttpStatus.OK;
+        HttpStatus responseStatus = HttpStatus.NO_CONTENT;
 
         ProblemDetail problemDetail = this.createProblemDetail(exception,
                 responseStatus,

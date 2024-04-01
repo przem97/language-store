@@ -49,7 +49,7 @@ public class WordController {
     public ResponseEntity<List<WordDTO>> getWords(
             @RequestParam(value = "pageNumber", required = false, defaultValue = "0") @PositiveOrZero Integer pageNumber,
             @RequestParam(value = "pageSize", required = false, defaultValue = "100") @Positive Integer pageSize,
-            @RequestParam(value = "sortBy", required = false, defaultValue = "[\"id\"]") @NotEmpty List<String> sortBy,
+            @RequestParam(value = "sortBy", required = false, defaultValue = "id") @NotEmpty List<String> sortBy,
             @RequestParam(value = "containing", required = false, defaultValue = "") String containing,
             @RequestParam(value = "dateFrom", required = false) LocalDateTime dateFrom,
             @RequestParam(value = "dateTo", required = false) LocalDateTime dateTo) {
