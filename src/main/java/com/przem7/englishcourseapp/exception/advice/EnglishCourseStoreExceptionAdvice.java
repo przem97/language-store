@@ -16,7 +16,9 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -68,11 +70,17 @@ public class EnglishCourseStoreExceptionAdvice extends ResponseEntityExceptionHa
         ProblemDetail problemDetail = ex.updateAndGetBody(this.getMessageSource(), LocaleContextHolder.getLocale());
         Map<String, Object> properties = problemDetail.getProperties() == null ? new HashMap<>() : problemDetail.getProperties();
 
+        Map<String, List<ParamErrorDetail>> paramErrorDetails = new HashMap<>();
+
         for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
-            properties.put(fieldError.getField(),
-                            new ParamErrorDetail(fieldError.getDefaultMessage(),
-                                    fieldError.getRejectedValue() == null ? "null" : fieldError.getRejectedValue().toString()));
+            List<ParamErrorDetail> value = paramErrorDetails.getOrDefault(fieldError.getField(), new ArrayList<>());
+            value.add(new ParamErrorDetail(fieldError.getDefaultMessage(),
+                        fieldError.getRejectedValue() == null ? "null" : fieldError.getRejectedValue().toString()));
+
+            paramErrorDetails.putIfAbsent(fieldError.getField(), value);
         }
+
+        properties.putAll(paramErrorDetails);
 
         HttpStatus responseStatus = HttpStatus.OK;
 
@@ -84,7 +92,7 @@ public class EnglishCourseStoreExceptionAdvice extends ResponseEntityExceptionHa
 
     private ResponseEntity<Object> handleWordNotFoundException(WordNotFoundException exception,
                                                                WebRequest webRequest) {
-        HttpStatus responseStatus = HttpStatus.NO_CONTENT;
+        HttpStatus responseStatus = HttpStatus.OK;
 
         ProblemDetail problemDetail = this.createProblemDetail(exception,
                 responseStatus,

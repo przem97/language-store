@@ -63,9 +63,9 @@ public class WordController {
 
     @GetMapping(
             value = "/words/{wordId}",
-            produces = { MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_VALUE }
+            produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<WordDTO> findById(@PathVariable("wordId") Long wordId)
+    public ResponseEntity<WordDTO> findById(@PathVariable("wordId") @PositiveOrZero Long wordId)
             throws WordNotFoundException {
         Word word = wordService.findById(wordId);
         return ResponseEntity.ok(wordMapper.convertToDto(word));
@@ -74,9 +74,8 @@ public class WordController {
     @PostMapping(
             value = "/words",
             consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = { MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_VALUE }
+            produces = MediaType.APPLICATION_JSON_VALUE
     )
-
     public ResponseEntity<WordDTO> save(@RequestBody @Validated(CreateWord.class) WordDTO wordDto)
             throws WordAlreadyExistsException {
         Word word = wordMapper.convertToEntity(wordDto);

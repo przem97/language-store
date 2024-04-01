@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 @Configuration
 public class JacksonConfiguration {
 
-    private static final String PATTERN = "yyyy-MM-dd hh:mm:ss.SSSSSS";
+    private static final String PATTERN = "yyyy-MM-dd HH:mm:ss.SSS";
 
     @Bean(name = "dtoDateFormat")
     public DateTimeFormatter dateTimeFormatter() {

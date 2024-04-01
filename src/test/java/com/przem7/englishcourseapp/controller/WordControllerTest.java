@@ -212,7 +212,7 @@ public class WordControllerTest {
     }
 
     @Test
-    void findByIdShouldReturnNoContent() throws Exception {
+    void findByIdShouldReturnOkResponseWithErrorInfoOnWordNotFound() throws Exception {
         // given
         Long id = 432L;
         Throwable throwable = new WordNotFoundException(id);
@@ -222,9 +222,9 @@ public class WordControllerTest {
         ResultActions findWordById = this.mockMvc.perform(get("/words/{id}", id));
 
         // then
-        findWordById.andExpect(status().isNoContent())
-                .andExpect(jsonPath("$.title").value("No Content"))
-                .andExpect(jsonPath("$.status").value(HttpStatus.NO_CONTENT.value()))
+        findWordById.andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("OK"))
+                .andExpect(jsonPath("$.status").value(HttpStatus.OK.value()))
                 .andExpect(jsonPath("$.detail").value("No word with id " + id + " found"))
                 .andExpect(jsonPath("$.instance").value("/words/" + id))
                 .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON));
