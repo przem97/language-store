@@ -29,6 +29,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web:3.2.2")
     implementation("org.modelmapper:modelmapper:3.2.0")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.1")
+    implementation("org.springframework.boot:spring-boot-starter-validation:3.2.3")
 
     compileOnly("org.projectlombok:lombok")
 
@@ -39,6 +40,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("net.datafaker:datafaker:2.1.0")
+    testImplementation("io.zonky.test:embedded-database-spring-test:2.5.0")
 }
 
 tasks.withType<Test> {
